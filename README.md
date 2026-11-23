@@ -2,11 +2,6 @@
 
 > **He goes into the folder, finds the answer, and comes back. He does not touch anything — and he tells you where he could not look.** *"You ain't nothin' but a hound dog."*
 
-> 🔴 **DO NOT SEND THE DOG TO LOOK AT UNTRUSTED CODE.**
-> **Elvis is not a sandbox. He is your house dog.**
-> He is built to run scripts *you* wrote, over folders *you* own. For code you do not trust,
-> use an OS-level sandbox: a container, a separate user, no network.
-
 
 **Get it.** One file, one job. The licence is MPL-2.0 and the `LICENSE` file sits beside it.
 
@@ -22,27 +17,23 @@ a folder of your own: that folder is what the script is allowed to look at.
 |---|---|
 | **What it needs** | Python 3 and nothing else. No packages, no agent framework, no account. The script says 3.8 or newer. If `python` is not on your PATH, use `py -3` in its place. |
 | **Where it runs** | Windows and Linux, in the script's own words. Verified on Python 3.12.10 on Windows 10. Linux and macOS untested here. |
-| **What it does not cover** | A script you do not trust. It stops the mistakes of Alpha 1 and Alpha 2, not an attacker. Read "What this does not protect against" before you run anything you did not write. |
+| ⚠️ **What it does not cover** | A script you do not trust. **He stops accidents, not attacks.** Read the **Warnings** at the end before you run anything you did not write. |
 
 ---
 
-## What this is for, before anything else
+## 🐕 What he is for
 
 **He is a house dog. He checks your own place.**
 
-**This is a speed tool for scripts you wrote, not a jail for scripts you did not.**
+You point him at a folder and ask one question. He writes nothing, wanders nowhere else, and
+comes back with the answer — plus an honest note of what he could not see.
 
 | | |
 |---|---|
-| **It protects you from** | your own script's mistakes: a stray `open(..., "w")`, an `os.remove`, a path that wanders out of the folder, a request to the network |
-| **It does not protect you from** | a script written to break out. Python is not a sandbox, and an audit hook watches; it is not a wall |
-| **Use it on** | your own folders, with scripts you or your agent wrote, on your own machine |
-| **Do not use it for** | anything facing the outside: code from strangers, a shared service, untrusted input |
+| ✅ **Use him on** | your own folders, with scripts you or your agent wrote, on your own machine |
+| 🚫 **Not for** | code from strangers, a shared service, untrusted input |
 
-**If you do not trust the script, do not run it here.** Use an OS-level sandbox: a container, a
-separate user, no network namespace.
-
-### Scope — what he watches, and what he does not
+## 📏 Limits and scope — what he watches, and what he does not
 
 | | |
 |---|---|
@@ -71,18 +62,18 @@ keep, instead of a bigger one it cannot.*
 
 ---
 
-## 1 · What happens to you
+## 😫 What happens to you
 
 You ask an agent: "which of these 887 files mention X, and which have no date?" The agent calls a
 tool once per file and reads every result into its context. Most of what it reads is output nobody
 needed. You pay for all of it, and the answer you wanted is buried in it.
 
-## 2 · Why it happens
+## 🔍 Why it happens
 
 The cost is not the searching. **The cost is reading output that nobody needs.** One tool call per
 file means one result per file lands in the agent's context, whether it matters or not.
 
-## 3 · What to do
+## 🛠️ What to do
 
 **Let the agent write one small Python script that walks the folder itself and reports only what it
 decided to report.** This runner runs that script in a separate process and sends back one JSON
@@ -99,7 +90,7 @@ It is read-only on purpose, because the script it runs was written by a model a 
 nobody has read it yet. A stray `open(path, "w")` or a `rm` in generated code is the mistake this
 guards against.
 
-### How to run it
+### ▶️ How to run it
 
 Self-test first. It must end with `selftest: pass`:
 
@@ -144,7 +135,7 @@ Other flags: `--timeout N` is the wall-clock limit in whole seconds (default 60)
 `--max-file-bytes N` caps one file (default 2 MB). `--max-total-bytes N` caps everything one run
 reads (default 64 MB).
 
-### What the script gets
+### 🧰 What the script gets
 
 The script runs with its working directory set to the first root, and gets one global named `box`:
 
@@ -165,7 +156,7 @@ never becomes part of `reported`.
 A file over the size cap, or past the total budget, is **not read**: `box.read` returns `""` and the
 file is listed under `coverage.skipped` with the reason.
 
-### The result
+### 📤 The result
 
 One JSON object with nine fields:
 
@@ -199,7 +190,7 @@ One JSON object with nine fields:
 still have fallen short of what it was asked to look at. `found` says the script reported; it does
 not say the run saw everything.
 
-### The four outcomes
+### 🎯 The four outcomes
 
 | Outcome | What it means |
 |---|---|
@@ -222,7 +213,7 @@ first few are shown. **Read
 beside it means the script may never have looked at anything.
 
 
-### Exit codes
+### 🚪 Exit codes
 
 | Exit | What it means |
 |---|---|
@@ -232,7 +223,7 @@ beside it means the script may never have looked at anything.
 
 `--selftest` exits `0` on pass and `1` on fail.
 
-## 4 · What it refuses
+## ⛔ What he refuses
 
 **The engine is read-only.** An audit hook is installed in the child process before the script's
 first line. It refuses these, and a refusal raises an error and is also recorded, so a script that
@@ -248,48 +239,43 @@ catches the error still ends `crashed`:
 
 A wall-clock timeout kills the child process: `crashed`, `timed out after Ns`.
 
-## 5 · What this does not protect against
+## ⚠️ Warnings — read before you run him
 
-**This is not a defence against a hostile script.** The audit hook and the path confinement stop
-the mistakes Alpha 1 and Alpha 2 make in generated scripts: a stray `open(..., "w")`, a `rm`, a request to the network.
-It does not stop a script that is trying to escape. Python is not a sandbox. A determined script can
-reach around an audit hook with `ctypes` tricks, by monkeypatching the engine's own objects, by
-forging the result marker on the real stdout, by exhausting resources, or through events the
-interpreter does not audit.
+> 🔴 **DO NOT SEND THE DOG TO LOOK AT UNTRUSTED CODE.**
+> **Elvis is not a sandbox. He is your house dog.**
+> For code you do not trust, use an OS-level sandbox: a container, a separate user, no network.
 
-**If you do not trust the script, do not run it here.** Use an OS-level sandbox: a container, a
-separate user, no network namespace.
+🐕 **He stops accidents, not attacks.** The audit hook and the path confinement stop the mistakes a
+generated script makes: a stray `open(..., "w")`, an `os.remove`, a path that wanders off, a call
+to the network. They do not stop a script that is *trying* to escape — a determined one can reach
+around an audit hook with `ctypes`, by monkeypatching the engine's own objects, by forging the
+result marker on stdout, by exhausting resources, or through events the interpreter never audits.
 
-The gaps the code documents, said plainly:
+📏 **What the code does not cover, said plainly:**
 
-- **A read the script makes by itself is counted, but not in the same detail.** `open`, `io.open`,
-  `pathlib`, `os.open`, `os.listdir` and `os.scandir` all show up in `coverage.direct_observations`,
-  and a failure among them lands in `coverage.direct_observation_failures`, even when the script
+- 🔍 **Metadata is not confined.** `os.stat`, `os.access` and `os.readlink` reach outside the roots:
+  a script can learn that a file exists, its size and where a link points. **It cannot read the
+  contents.**
+- 📖 **A read the script makes by itself is counted, but in less detail.** `open`, `io.open`,
+  `pathlib`, `os.open`, `os.listdir` and `os.scandir` all appear in `coverage.direct_observations`,
+  and a failure among them lands in `coverage.direct_observation_failures` even when the script
   catches it. What they do not do is count against the byte budgets or name the file in
-  `coverage.skipped` the way a `box.read` does. **Use `box` when you want the accounting; the direct
-  route still cannot hide that it happened.**
-- **A failure the run cannot pin on a particular read lands in `coverage.unknown_failures`**, and
-  the coverage is not declared complete. The run would rather say "something failed and I am not
-  sure whose it was" than guess.
-- **Metadata is not confined.** `os.stat`, `os.access` and `os.readlink` reach outside the roots:
-  a script can learn that a file exists, its size and where a link points. It cannot read the
-  contents.
-- **Memory and CPU are limited only by the timeout.**
-- **The size of `reported` is not capped.**
+  `coverage.skipped` the way a `box.read` does. **Use `box` when you want the accounting — the
+  direct route still cannot hide that it happened.**
+- ❓ **A failure the run cannot pin on a particular read** lands in `coverage.unknown_failures`, and
+  the coverage is not declared complete. The run would rather say *"something failed and I am not
+  sure whose it was"* than guess.
+- ⏱️ **Memory and CPU are limited only by the timeout.**
+- 📦 **The size of `reported` is not capped.**
 
-Three gaps that earlier versions carried are gone, because the thing that caused them is gone: the
-engine no longer starts any program of yours. There is no whitelist to keep complete, no command
-that reads outside the roots, and no git configuration that can make git itself start something.
+📍 **One more thing to know, not a gap in the guard:** with several roots, paths from the second
+root onward come back absolute, so a result can carry paths from the machine it ran on. **Check
+what you paste or send onward.**
 
-One more thing the code does, not a gap in the guard: with several roots, paths from the second root
-onward come back absolute, so a result can carry paths from the machine it ran on. Check what you
-paste or send onward.
+*"Read-only" describes what the hook watches for — not a promise about every way Python can touch
+a disk.*
 
-*This is a hound for scripts written by your own agent, on a folder you chose. It is not
-a sandbox, and "read-only" describes what the hook watches for, not a promise about every way Python
-can touch a disk.*
-
-### What is in this folder
+## 📁 What is in this folder
 
 | File | What it is |
 |---|---|
@@ -297,7 +283,7 @@ can touch a disk.*
 | `LICENSE` | MPL-2.0 |
 | `CREDITS.md` | whose idea this is |
 
-## 6 · Where this came from
+## 🙏 Where this came from
 
 An agent that writes code which makes its own tool calls, instead of calling one tool at a time.
 The name **Code Mode** is **Cloudflare's**: https://blog.cloudflare.com/code-mode-mcp/
