@@ -1,5 +1,7 @@
 # Credits
 
+**Built by [alphasyomega](https://github.com/alphasyomega) and Claude.**
+
 Ideas carry the name of whoever had them, also when we did not take their code.
 
 ---
