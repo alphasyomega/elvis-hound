@@ -116,6 +116,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from pathlib import Path
 
 MARKER = "@@CODE_MODE_RESULT@@"
 DEFAULT_TIMEOUT = 60
@@ -586,6 +587,16 @@ def _child_main(a):
     elif result["outcome"] is None:
         if not incomplete and not any(direct_observation_failures.values()) and not box.reported:
             result["outcome"] = "none"
+        elif not box.read_files and incomplete:
+            cause = ("could_not_read" if any(direct_observation_failures.values())
+                     else (incomplete_why[0] if incomplete_why else "could_not_read"))
+            coverage_detail = []
+            if incomplete:
+                coverage_detail.append("coverage.skipped")
+            if any(direct_observation_failures.values()):
+                coverage_detail.append("coverage.direct_observation_failures")
+            result.update(outcome="could_not_look",
+                          error="coverage incomplete (see %s)" % " and ".join(coverage_detail), error_kind=cause)
         elif box.reported:
             result["outcome"] = "found"
         else:
@@ -953,9 +964,34 @@ def _selftest():
                 and r["coverage"]["incomplete_why"] == ["file_cap_exceeded"], r)
 
         r = run("box.read('cap-only.txt')\nbox.report(ok=True)", max_file_bytes=100)
-        t.check("ac. a report with incomplete coverage remains found",
-                r["outcome"] == "found" and not r["coverage"]["complete"]
+        t.check("ac. a report after every attempted read is skipped cannot look",
+                r["outcome"] == "could_not_look" and r["coverage"]["files_read"] == 0
+                and not r["coverage"]["complete"]
                 and r["coverage"]["incomplete_why"] == ["file_cap_exceeded"], r)
+
+        blind_root = Path(work) / "all-skipped"
+        blind_root.mkdir()
+        for name in ("one.txt", "two.txt"):
+            (blind_root / name).write_text("xxxxxx", encoding="utf-8")
+        r = run("hits = box.grep('x')\nbox.report(hits=len(hits))",
+                root=str(blind_root), max_file_bytes=5)
+        t.check("ac0. reported grep after every read is skipped cannot look",
+                r["outcome"] == "could_not_look"
+                and {"found": 0, "none": 0, "could_not_look": 2}.get(r["outcome"], 3) == 2
+                and r["coverage"]["files_read"] == 0
+                and {item["path"] for item in r["coverage"]["skipped"]} == {"one.txt", "two.txt"}
+                and r["reported"] == {"hits": 0}, r)
+
+        partial_root = Path(work) / "partly-read"
+        partial_root.mkdir()
+        (partial_root / "readable.txt").write_text("x\n", encoding="utf-8")
+        (partial_root / "skipped.txt").write_text("xxxxxx", encoding="utf-8")
+        r = run("hits = box.grep('x')\nbox.report(hits=len(hits))",
+                root=str(partial_root), max_file_bytes=5)
+        t.check("ac1. reported grep with one read and one skip remains found",
+                r["outcome"] == "found" and r["coverage"]["files_read"] == 1
+                and [item["path"] for item in r["coverage"]["skipped"]] == ["skipped.txt"]
+                and r["reported"] == {"hits": 1}, r)
 
         r = run("for p in box.list():\n    box.read(p)")
         t.check("ad. a complete clean scan with no report is none",

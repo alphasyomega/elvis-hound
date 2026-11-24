@@ -82,8 +82,8 @@ cd elvis-hound
 python elvis.py --selftest
 ```
 
-That runs 66 checks against the engine itself. It takes about twenty seconds, because most of those
-checks start a fresh child process — *measured at 17.6 seconds on Python 3.12.10 on Windows 10.*
+That runs 68 checks against the engine itself. It takes about twenty seconds, because most of those
+checks start a fresh child process — *measured at 17.3 seconds on Python 3.12.10 on Windows 10.*
 **If it passes, what this page promises is true on your machine, not just on ours.**
 
 Now a real run. Save this as `find_todo.py`:
