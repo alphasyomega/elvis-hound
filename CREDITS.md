@@ -8,7 +8,8 @@ Ideas carry the name of whoever had them, also when we did not take their code.
 
 ## Who found something and made this better
 
-**Aya ([@ayakohi](https://github.com/ayakohi)) and Cygnus** tested this repository against the promises in its own README and reported two
+**Aya ([@ayakohi](https://github.com/ayakohi)), Cygnus and Assistant-Kun** tested this repository
+against the promises in its own README and reported two
 real gaps, with the exact scripts that produced them. One of them -- a database written from inside
 C code, where the guard raises no alarm -- is the reason `sqlite3.connect` is refused today and the
 reason the limits on that page are now worded honestly.

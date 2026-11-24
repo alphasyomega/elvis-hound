@@ -372,8 +372,8 @@ model a moment ago cannot wreck your notes by accident. Nothing more, and that o
 **Built by [alphasyomega](https://github.com/alphasyomega) and Claude.**
 
 **The gap that `sqlite3` walked through was found by Aya
-([@ayakohi](https://github.com/ayakohi)) and Cygnus**, who tested this repository against the
-promises on this page and wrote up what they found. The lock, and the honest wording of the limits,
+([@ayakohi](https://github.com/ayakohi)), Cygnus and Assistant-Kun**, who tested this repository
+against the promises on this page and wrote up what they found. The lock, and the honest wording of the limits,
 exist because of that reading. Thank you.
 
 **The idea this piece is built on:**
