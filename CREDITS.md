@@ -9,10 +9,19 @@ Ideas carry the name of whoever had them, also when we did not take their code.
 ## Who found something and made this better
 
 **Aya ([@ayakohi](https://github.com/ayakohi)), Cygnus and Assistant-Kun** tested this repository
-against the promises in its own README and reported two
-real gaps, with the exact scripts that produced them. One of them -- a database written from inside
-C code, where the guard raises no alarm -- is the reason `sqlite3.connect` is refused today and the
-reason the limits on that page are now worded honestly.
+against the promises in its own README and reported two real gaps, with the exact scripts that
+produced them.
+
+- **A database written from inside C code.** Python raises no alarm for it, so the read-only guard
+  never heard the write. `sqlite3.connect` is refused today, and the limits on that page are worded
+  honestly, because of this.
+- **A run that opened not one file still answering `found`, with exit code 0.** The page already
+  promised `could_not_look` for that case; the code did something else. It now answers what the
+  page promised.
+
+**Both are closed, and a self-test guards each one.** They also corrected our first guess at the
+cause of the second: `box.grep` does go through `box.read`; the defect was the order in which the
+outcome is decided.
 
 **A reading like that is a gift. Thank you.**
 
