@@ -150,7 +150,7 @@ _BLOCKED_EXACT = frozenset([
     "os.chown", "os.lchown", "os.chflags", "os.lchmod", "os.symlink", "os.link",
     "os.utime", "os.mkfifo", "os.mknod", "os.startfile", "os.kill", "os.killpg",
     "os.exec", "os.system", "os.posix_spawn", "os.spawn", "os.fork", "os.forkpty",
-    "subprocess.Popen", "urllib.Request", "pty.spawn", "webbrowser.open",
+    "subprocess.Popen", "urllib.Request", "pty.spawn", "webbrowser.open", "sqlite3.connect",
 ])
 _BLOCKED_PREFIX = ("shutil.", "socket.", "http.client.", "ftplib.", "smtplib.",
                    "telnetlib.", "ctypes.dlopen", "ctypes.call_function")
@@ -790,6 +790,14 @@ def _selftest():
         r = run("open(box.root + '/created.txt', 'w').write('x')")
         t.check("e. open(path, 'w') -> refused, crashed, file NOT created",
                 r["outcome"] == "crashed" and "refused" in err(r) and not os.path.exists(target), r)
+
+        target = os.path.join(root, "sqlite-test.db")
+        r = run("import sqlite3\nsqlite3.connect('sqlite-test.db')")
+        t.check("e0. sqlite3.connect -> refused, crashed, database NOT created",
+                r["outcome"] not in ("found", "none") and r["refusal_count"] >= 1
+                and "sqlite3.connect" in err(r) and not os.path.exists(target), r)
+        if os.path.exists(target):
+            os.remove(target)
 
         r = run("import subprocess\nsubprocess.Popen(['echo', 'hi'])")
         t.check("f. subprocess.Popen -> refused",
