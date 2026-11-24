@@ -37,7 +37,7 @@ the small answer plus an honest note of anything he could not look at.
 
 ## 😫 The problem
 
-You ask an agent: *"which of these 887 files mention X, and which have no date?"*
+You ask an AI agent: *"which of these 887 files mention X, and which have no date?"*
 
 The agent calls a tool once per file and reads every result into its memory. **Most of what it
 reads is output nobody needed.** You pay for all of it, and the answer you wanted is buried in the
@@ -46,7 +46,7 @@ middle.
 **The cost is not the searching. The cost is reading output that nobody needs.** One tool call per
 file means one result per file lands in the agent's memory, whether it matters or not.
 
-**What Elvis does instead:** the agent writes one small script that walks the folder itself and
+**What Elvis does instead:** the AI agent writes one small script that walks the folder itself and
 reports only what it decided to report. Elvis runs that script in a separate process and sends back
 one small result. Everything the script read stays in that process.
 
@@ -225,9 +225,6 @@ shown.
 
 ## 📏 Limits and scope
 
-🔴 **This section is not an apology. It is the most useful part of the page.** A tool that names its
-edges can be trusted inside them.
-
 **He is a house dog. He checks your own place.**
 
 | | |
@@ -336,8 +333,8 @@ keep, instead of a bigger one it cannot.*
 
 ## 🏠 Shape it to your house
 
-**This was built for one small setup, on purpose, and yours is shaped differently.** What is here is
-a baseline meant to be changed. Everything below lives in `elvis.py`, near the top, named so you can
+**This was built for one small setup, on purpose, and yours certainly is shaped
+differently.** What is here is a baseline meant to be changed. Everything below lives in `elvis.py`, near the top, named so you can
 find it without counting lines:
 
 | What you might want | Where it lives | What to do |
@@ -372,7 +369,16 @@ model a moment ago cannot wreck your notes by accident. Nothing more, and that o
 
 ## 🙏 Credits
 
-An agent that writes code which makes its own tool calls, instead of calling one tool at a time.
+**Built by [alphasyomega](https://github.com/alphasyomega) and Claude.**
+
+**The gap that `sqlite3` walked through was found by Aya
+([@ayakohi](https://github.com/ayakohi)) and Cygnus**, who tested this repository against the
+promises on this page and wrote up what they found. The lock, and the honest wording of the limits,
+exist because of that reading. Thank you.
+
+**The idea this piece is built on:**
+
+An AI agent that writes code which makes its own tool calls, instead of calling one tool at a time.
 The name **Code Mode** is **Cloudflare's**: https://blog.cloudflare.com/code-mode-mcp/
 **Anthropic** published their own version as *"code execution with MCP"*, crediting Cloudflare as
 the inspiration: https://www.anthropic.com/engineering/code-execution-with-mcp

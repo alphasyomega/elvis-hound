@@ -6,6 +6,17 @@ Ideas carry the name of whoever had them, also when we did not take their code.
 
 ---
 
+## Who found something and made this better
+
+**Aya ([@ayakohi](https://github.com/ayakohi)) and Cygnus** tested this repository against the promises in its own README and reported two
+real gaps, with the exact scripts that produced them. One of them -- a database written from inside
+C code, where the guard raises no alarm -- is the reason `sqlite3.connect` is refused today and the
+reason the limits on that page are now worded honestly.
+
+**A reading like that is a gift. Thank you.**
+
+---
+
 ## The one method this piece took from outside
 
 **An agent that writes code which makes its own tool calls, instead of calling one tool at a time.**
