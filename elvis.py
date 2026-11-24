@@ -9,12 +9,12 @@ THE IDEA
     not reading output nobody needs.
 
 USAGE
-    python code_mode.py [--root <folder>]... --script <file.py | -> [--timeout 60] [--json]
+    python elvis.py [--root <folder>]... --script <file.py | -> [--timeout 60] [--json]
                         [--max-file-bytes N] [--max-total-bytes N]
-    python code_mode.py --selftest
+    python elvis.py --selftest
 
     --script -   read the script text from stdin instead of a file, so one run
-                 needs no temp file:  echo "box.report(n=len(box.list()))" | python code_mode.py --script -
+                 needs no temp file:  echo "box.report(n=len(box.list()))" | python elvis.py --script -
     --root       repeatable: every folder given is a root, and a path is allowed
                  when it is inside ANY of them. With no --root at all the current
                  working directory is the single root.
