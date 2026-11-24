@@ -759,7 +759,7 @@ class _Tally(object):
 def _selftest():
     import shutil
     t = _Tally()
-    work = os.path.realpath(tempfile.mkdtemp(prefix="code_mode_test_"))
+    work = os.path.realpath(tempfile.mkdtemp(prefix="elvis_test_"))
     root = os.path.join(work, "tree")
     scripts = os.path.join(work, "scripts")
     os.makedirs(os.path.join(root, "sub"))
